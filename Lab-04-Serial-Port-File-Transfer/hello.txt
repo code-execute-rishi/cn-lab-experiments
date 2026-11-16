@@ -1,0 +1,5 @@
+Hello from PC A!
+This file is being sent over a simulated serial link (PTY pair via socat).
+It has multiple lines, some numbers 12345, and punctuation !@#$%.
+Line 4: testing PC to PC file transfer using the serial port, byte for byte.
+Line 5: end of file.
