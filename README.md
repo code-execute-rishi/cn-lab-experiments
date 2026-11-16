@@ -1,4 +1,4 @@
-# Computer Networks Laboratory (CS-504 / CS-501) — Experiments 1 to 9
+# Computer Networks Laboratory (CS-504 / CS-501) — Experiments 1 to 14
 
 [![Language: C++17](https://img.shields.io/badge/language-C%2B%2B17%20%2F%20POSIX-00599C.svg?logo=c%2B%2B)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![POSIX Sockets](https://img.shields.io/badge/sockets-POSIX%20BSD%20API-red.svg)]()
@@ -6,7 +6,7 @@
 [![Build: Passing](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-> Complete, modular, and mathematically verified implementations for **Computer Networks Laboratory (CS-504 / CS-501)** Experiments 1 through 9. Written in modern **C++17 with native POSIX Berkeley Sockets and POSIX Threads (`std::thread`, `std::mutex`)**, accompanied by clean build tooling (`Makefile`) and companion Python test suites with **zero external dependencies**.
+> Complete, modular, and mathematically verified implementations for **Computer Networks Laboratory (CS-504 / CS-501)** Experiments 1 through 14 (13 source files). Labs 1–9 are written in modern **C++17 with native POSIX Berkeley Sockets and POSIX Threads (`std::thread`, `std::mutex`)**; Labs 10–14 (CSMA, CSMA/CD, RIP, OSPF, TCP Echo) are written in **Python 3** using only the standard library. Build tooling (`Makefile`) included, with **zero external dependencies**.
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## 📋 Comprehensive Table of Experiments
 
-| Experiment | Title & Protocol Focus | C++ Source File / Class | CLI Target |
+| Experiment | Title & Protocol Focus | Source File / Class | CLI Target |
 | :---: | :--- | :--- | :---: |
 | **Lab 1** | **Star Topology LAN & Linux Diagnostics Simulator**<br>• Cisco Catalyst Switch 2960 emulation with dynamic CAM MAC learning table<br>• Address Resolution Protocol (ARP) broadcast and unicast resolution cache<br>• ICMP Echo Request / Reply `ping` with min/avg/max RTT and packet loss<br>• Linux diagnostics emulation: `ifconfig`, `netstat`, and `arp -a` | [`src/lab1_star_topology.cpp`](src/lab1_star_topology.cpp)<br>`Lab1_StarTopology` | `--lab 1` |
 | **Lab 2** | **TCP Socket Programming (Client-Server Architecture)**<br>• Stream socket lifecycle: `socket()`, `setsockopt(SO_REUSEADDR)`, `bind()`<br>• Passive listen & 3-way handshake: `listen()`, `accept()`, `connect()`<br>• Bidirectional conversational streaming with `send()` and `recv()`<br>• Graceful connection termination on `/quit` / `EXIT` | [`src/lab2_tcp_sockets.cpp`](src/lab2_tcp_sockets.cpp)<br>`Lab2_TCPSocket` | `--lab 2` |
@@ -33,6 +33,11 @@
 | **Lab 6 & 7** | **Error Control Protocols & Alternating Bit Protocol**<br>• Alternating Bit Protocol (Stop-and-Wait with 1-bit sequence tags: 0 and 1)<br>• Data frame loss recovery via retransmission timeout (RTO)<br>• ACK loss recovery with duplicate frame filtering at the receiver<br>• Channel efficiency derivations: $\eta_{\text{SAW}} = \frac{1}{1 + 2a}$ vs $\eta_{\text{Sliding}} = \frac{W}{1 + 2a}$ | [`src/lab6_7_error_control.cpp`](src/lab6_7_error_control.cpp)<br>`Lab6_7_ErrorControl` | `--lab 6`<br>`--lab 7` |
 | **Lab 8** | **Data Link Error Detection Methods**<br>• **VRC (1D Parity):** Even and Odd parity generator and parity bit verifier<br>• **LRC (Block Parity):** Columnar Block Check Character (BCC) calculation<br>• **2D Parity Matrix:** Autonomous single-bit error localization & correction at $(r, c)$ intersection; 4-bit corner failure demonstration<br>• **Cyclic Redundancy Check (CRC):** Modulo-2 binary polynomial division (GF(2)) for CRC-4, CRC-8, CRC-16, and CRC-32 (Ethernet) | [`src/lab8_crc_lrc_vrc.cpp`](src/lab8_crc_lrc_vrc.cpp)<br>`Lab8_ErrorDetection` | `--lab 8` |
 | **Lab 9** | **Error Correction Codes (Hamming SEC & Extended SEC-DED)**<br>• **Hamming (7,4) Code:** Single Error Correction (SEC), syndrome decoding $S = (S_4 S_2 S_1)_2$, Hamming redundancy bound $(m+r+1) \le 2^r$<br>• **Extended SEC-DED (8,4) Architecture:** Overall parity bit $P_0$ distinguishing correctable 1-bit from uncorrectable 2-bit errors<br>• **Stream Forward Error Correction (FEC):** Continuous ASCII text transmission over noisy channels with on-the-fly bit inversion correction | [`src/lab9_hamming_code.cpp`](src/lab9_hamming_code.cpp)<br>`Lab9_HammingCode` | `--lab 9` |
+| **Lab 10** | **Non-Persistent CSMA Protocol**<br>• Carrier sensing on a shared bus; transmit immediately if the channel is idle<br>• Random backoff (no continuous sensing) when the channel is busy<br>• Collision tracking inside the propagation window $\tau$<br>• Simulated vs theoretical throughput $S$ across offered loads $G$ | [`src/lab10_csma_non_persistent.py`](src/lab10_csma_non_persistent.py) | `make lab10` |
+| **Lab 11** | **1-Persistent & p-Persistent CSMA/CD with Binary Exponential Backoff**<br>• Collision detection with immediate abort and 32-bit jam signal<br>• IEEE 802.3 truncated Binary Exponential Backoff (BEB)<br>• Delivered frames, collisions, throughput and delay under light, medium and heavy load | [`src/lab11_csma_cd_beb.py`](src/lab11_csma_cd_beb.py) | `make lab11` |
+| **Lab 12** | **Distance Vector Routing (RIP)**<br>• Distributed Bellman-Ford: $D_x(y) = \min_v \{ c(x,v) + D_v(y) \}$<br>• 5-router mesh convergence and per-router routing tables<br>• Count-to-Infinity hazard after link failure<br>• Split Horizon with Poisoned Reverse | [`src/lab12_rip_distance_vector.py`](src/lab12_rip_distance_vector.py) | `make lab12` |
+| **Lab 13** | **OSPF Link-State Routing (Dijkstra SPF)**<br>• LSA flooding and synchronized Link-State Database (LSDB)<br>• Dijkstra shortest-path tree and forwarding tables<br>• Dynamic rerouting after a link metric change | [`src/lab13_ospf_link_state.py`](src/lab13_ospf_link_state.py) | `make lab13` |
+| **Lab 14** | **TCP/IP Echo Client-Server**<br>• Multi-threaded TCP echo server (`AF_INET`, `SOCK_STREAM`, `SO_REUSEADDR`, port 65432)<br>• Client stream I/O with echo verification<br>• Round-Trip Time (RTT) measurement | [`src/lab14_tcp_echo_socket.py`](src/lab14_tcp_echo_socket.py) | `make lab14` |
 
 ---
 
@@ -143,6 +148,7 @@ By adding bit $P_0$ as the overall parity covering all 7 bits:
 
 ### Prerequisites
 * **C++ Compiler:** `clang++` (macOS/LLVM) or `g++` (Linux/GCC) with C++17 support.
+* **Python:** Python 3.7+ for Labs 10–14 (standard library only).
 * **Make:** Standard GNU Make.
 * **Operating System:** macOS, Linux, Ubuntu, Debian, CentOS, WSL.
 
@@ -157,8 +163,11 @@ cd cn-lab-experiments
 # Build the master binary
 make all
 
-# Run complete automated test suite (Labs 1 through 9)
+# Run complete automated test suite (Labs 1 through 9, C++)
 make run
+
+# Run Labs 10 through 14 (Python)
+make run_python
 ```
 
 ### 2. Run a Specific Lab Experiment
@@ -172,6 +181,11 @@ make lab5    # Flow Control (Stop & Wait / Go-Back-N / Selective Repeat)
 make lab6    # Error Control & Alternating Bit Protocol
 make lab8    # Error Detection (VRC, LRC, 2D Parity, CRC Modulo-2)
 make lab9    # Error Correction (Hamming 7,4 & Extended SEC-DED 8,4)
+make lab10   # Non-Persistent CSMA
+make lab11   # 1-Persistent & p-Persistent CSMA/CD with BEB
+make lab12   # Distance Vector Routing (RIP)
+make lab13   # OSPF Link-State Routing (Dijkstra)
+make lab14   # TCP/IP Echo Client-Server
 ```
 
 ### 3. Direct Compiler Invocations
@@ -186,10 +200,14 @@ clang++ -std=c++17 src/lab8_crc_lrc_vrc.cpp -o bin/lab8
 
 clang++ -std=c++17 src/lab9_hamming_code.cpp -o bin/lab9
 ./bin/lab9
+
+# Labs 10-14 are Python scripts
+python3 src/lab10_csma_non_persistent.py
+python3 src/lab14_tcp_echo_socket.py
 ```
 
 ### 4. Interactive Menu Mode
-Run without command-line arguments to launch the interactive selector:
+Run without command-line arguments to launch the interactive selector (C++ binary, Labs 1–9):
 ```bash
 ./bin/cn_labs_all
 ```
@@ -342,13 +360,217 @@ Transmitting string: "MANIT" with Forward Error Correction
 ```
 </details>
 
+<details>
+<summary><b>Click to expand verified terminal outputs (Labs 10 through 14)</b></summary>
+
+**Lab 10:** `python3 src/lab10_csma_non_persistent.py`
+
+```text
+==============================================================================
+COMPUTER NETWORKS LAB - EXPERIMENT 10: NON-PERSISTENT CSMA SIMULATOR
+Student: Aradhya Jain | Scholar No: 24112011111 | Section: CSE-1
+==============================================================================
+Topology: 10 Stations | Bandwidth: 1.0 Mbps | Frame: 1000 bits (1.0 ms)
+Propagation Delay (tau): 10.0 us | Parameter a = tau / T_fr = 0.010
+------------------------------------------------------------------------------
+Arrival (fps) Offered (G)   Sim Throughput (S)  Theory (S)    Collisions  Avg Delay
+------------------------------------------------------------------------------
+100           0.115         0.1150              0.1029        0           1.06 ms
+300           0.310         0.3100              0.2354        0           1.28 ms
+500           0.475         0.4750              0.3195        1           1.79 ms
+800           0.710         0.7050              0.4106        9           2.82 ms
+1000          1.012         0.7700              0.4955        73          28.81 ms
+1500          1.555         0.7675              0.5956        81          88.53 ms
+2500          2.502         0.7125              0.6918        106         129.63 ms
+4000          3.882         0.7400              0.7588        95          156.81 ms
+------------------------------------------------------------------------------
+[STATUS] Non-Persistent CSMA channel contention protocol verified successfully.
+```
+
+**Lab 11:** `python3 src/lab11_csma_cd_beb.py`
+
+```text
+================================================================================
+COMPUTER NETWORKS LAB - EXPERIMENT 11: CSMA/CD PERSISTENCE & BEB TESTBENCH
+Student: Aradhya Jain | Scholar No: 24112011111 | Section: CSE-1
+================================================================================
+Parameters: 8 Stations | Slot Time: 51.2 us | Max Retries: 16 | Slots: 1000
+--------------------------------------------------------------------------------
+Protocol Mode     Arrival Rate   Delivered   Collisions  Dropped   Throughput  Avg Delay
+--------------------------------------------------------------------------------
+1-Persistent      Light (2%)     168         57          0         0.336       4.92 slots
+p-Persistent(0.5) Light (2%)     162         29          0         0.324       6.5 slots
+p-Persistent(0.2) Light (2%)     153         25          0         0.306       10.18 slots
+--------------------------------------------------------------------------------
+1-Persistent      Medium (6%)    303         144         0         0.606       106.77 slots
+p-Persistent(0.5) Medium (6%)    285         199         0         0.570       84.55 slots
+p-Persistent(0.2) Medium (6%)    295         203         0         0.590       184.86 slots
+--------------------------------------------------------------------------------
+1-Persistent      Heavy (12%)    330         156         0         0.660       116.47 slots
+p-Persistent(0.5) Heavy (12%)    308         162         0         0.616       247.83 slots
+p-Persistent(0.2) Heavy (12%)    290         196         0         0.580       312.25 slots
+--------------------------------------------------------------------------------
+```
+
+**Lab 12:** `python3 src/lab12_rip_distance_vector.py`
+
+```text
+==============================================================================
+COMPUTER NETWORKS LAB - EXPERIMENT 12: DISTANCE VECTOR ROUTING (RIP)
+Student: Aradhya Jain | Scholar No: 24112011111 | Section: CSE-1
+==============================================================================
+[PHASE 1: 5-ROUTER MESH CONVERGENCE TESTBENCH]
+>> Initial network converged successfully in 4 rounds.
+Router A Routing Table:
+  Destination    Cost (Hops)    Next Hop
+  ----------------------------------------
+  A              0              A
+  B              1              B
+  C              2              B
+  D              3              B
+  E              4              B
+
+Router B Routing Table:
+  Destination    Cost (Hops)    Next Hop
+  ----------------------------------------
+  A              1              A
+  B              0              B
+  C              1              C
+  D              2              C
+  E              3              C
+
+Router C Routing Table:
+  Destination    Cost (Hops)    Next Hop
+  ----------------------------------------
+  A              2              B
+  B              1              B
+  C              0              C
+  D              1              D
+  E              2              D
+
+Router D Routing Table:
+  Destination    Cost (Hops)    Next Hop
+  ----------------------------------------
+  A              3              C
+  B              2              C
+  C              1              C
+  D              0              D
+  E              1              E
+
+Router E Routing Table:
+  Destination    Cost (Hops)    Next Hop
+  ----------------------------------------
+  A              4              D
+  B              3              D
+  C              2              D
+  D              1              D
+  E              0              E
+
+------------------------------------------------------------------------------
+[PHASE 2: LINK FAILURE & COUNT-TO-INFINITY HAZARD EVALUATION]
+Scenario: Severing link A <---> B. Destination B unreachable from A directly.
+
+Simulating failure without Split Horizon (Count-to-Infinity):
+>> Bounced routing vectors. Convergence took 15 rounds to count to 16.
+
+Simulating failure WITH Split Horizon & Poisoned Reverse:
+>> Immediate loop suppression! Converged cleanly in 2 rounds.
+==============================================================================
+```
+
+**Lab 13:** `python3 src/lab13_ospf_link_state.py`
+
+```text
+==============================================================================
+COMPUTER NETWORKS LAB - EXPERIMENT 13: OSPF LINK-STATE ROUTING (DIJKSTRA)
+Student: Aradhya Jain | Scholar No: 24112011111 | Section: CSE-1
+==============================================================================
+[PHASE 1: LSDB FLOODING & DIJKSTRA SPF COMPUTATION]
+OSPF Forwarding Table for Router [R1] (Area: 0.0.0.0):
+  Destination    Metric (Cost)  Next Hop          Shortest Path
+  -----------------------------------------------------------------
+  R1             0              DIRECT (Self)     R1
+  R2             10             R2                R1 -> R2
+  R3             20             R2                R1 -> R2 -> R3
+  R4             45             R2                R1 -> R2 -> R3 -> R5 -> R4
+  R5             35             R2                R1 -> R2 -> R3 -> R5
+  R6             65             R2                R1 -> R2 -> R3 -> R5 -> R4 -> R6
+
+OSPF Forwarding Table for Router [R3] (Area: 0.0.0.0):
+  Destination    Metric (Cost)  Next Hop          Shortest Path
+  -----------------------------------------------------------------
+  R1             20             R2                R3 -> R2 -> R1
+  R2             10             R2                R3 -> R2
+  R3             0              DIRECT (Self)     R3
+  R4             25             R5                R3 -> R5 -> R4
+  R5             15             R5                R3 -> R5
+  R6             45             R5                R3 -> R5 -> R4 -> R6
+
+------------------------------------------------------------------------------
+[PHASE 2: DYNAMIC METRIC RECONFIGURATION & PATH ADAPTATION]
+Action: Increasing R1-R2 link metric from 10 to 70 (Simulating trunk congestion)
+>> Recomputed Shortest Path Tree for Router R1:
+OSPF Forwarding Table for Router [R1] (Area: 0.0.0.0):
+  Destination    Metric (Cost)  Next Hop          Shortest Path
+  -----------------------------------------------------------------
+  R1             0              DIRECT (Self)     R1
+  R2             40             R3                R1 -> R3 -> R2
+  R3             30             R3                R1 -> R3
+  R4             55             R3                R1 -> R3 -> R5 -> R4
+  R5             45             R3                R1 -> R3 -> R5
+  R6             75             R3                R1 -> R3 -> R5 -> R4 -> R6
+
+[STATUS] OSPF Link-State Database and Dijkstra SPF verified successfully.
+==============================================================================
+```
+
+**Lab 14:** `python3 src/lab14_tcp_echo_socket.py` (RTT values change on every run)
+
+```text
+==============================================================================
+COMPUTER NETWORKS LAB - EXPERIMENT 14: TCP/IP ECHO SOCKET ARCHITECTURE
+Student: Aradhya Jain | Scholar No: 24112011111 | Section: CSE-1
+==============================================================================
+[SERVER STARTED] Listening on 127.0.0.1:65432
+
+[PHASE 1: CLIENT-SERVER STREAM I/O & RTT MEASUREMENT]
+>> Sent   : "SYN -> SYN-ACK -> ACK: Handshake Verified"
+   Echoed : "SYN -> SYN-ACK -> ACK: Handshake Verified" | RTT: 0.139 ms | Status: MATCH [PASS]
+
+>> Sent   : "Computer Networks Lab (CS-501) - MANIT Bhopal"
+   Echoed : "Computer Networks Lab (CS-501) - MANIT Bhopal" | RTT: 0.062 ms | Status: MATCH [PASS]
+
+>> Sent   : "Scholar Number: 24112011111 | Aradhya Jain"
+   Echoed : "Scholar Number: 24112011111 | Aradhya Jain" | RTT: 0.058 ms | Status: MATCH [PASS]
+
+>> Sent   : "Packet Stream Frame 04: Hello Berkeley Sockets"
+   Echoed : "Packet Stream Frame 04: Hello Berkeley Sockets" | RTT: 0.056 ms | Status: MATCH [PASS]
+
+>> Sent   : "Stream Boundary Test: Full-Duplex Byte Transport"
+   Echoed : "Stream Boundary Test: Full-Duplex Byte Transport" | RTT: 0.057 ms | Status: MATCH [PASS]
+
+------------------------------------------------------------------------------
+[PHASE 2: CONCURRENT MULTI-CLIENT THREAD POOL STRESS TEST]
+Thread Client-0: Transmitted 3 frames concurrently | Avg RTT: 0.163 ms | Verified: 100%
+Thread Client-1: Transmitted 3 frames concurrently | Avg RTT: 0.144 ms | Verified: 100%
+Thread Client-2: Transmitted 3 frames concurrently | Avg RTT: 0.162 ms | Verified: 100%
+Thread Client-3: Transmitted 3 frames concurrently | Avg RTT: 0.155 ms | Verified: 100%
+------------------------------------------------------------------------------
+>> Total bytes echoed by server: 407 bytes across sessions.
+[SERVER SHUTDOWN] Port 65432 closed cleanly.
+[STATUS] TCP/IP Socket Stream and 3-Way Handshake echo model verified.
+==============================================================================
+```
+
+</details>
+
 ---
 
 ## 📂 Repository File Structure
 
 ```
 cn-lab-experiments/
-├── Makefile                                # Automated build system (all, run, lab1..lab9)
+├── Makefile                                # Automated build system (all, run, run_python, lab1..lab14)
 ├── README.md                               # Comprehensive documentation & theory guide
 ├── LICENSE                                 # MIT Open Source License
 ├── .gitignore                              # Git exclusion rules (bin, objects, debug symbols)
@@ -362,7 +584,12 @@ cn-lab-experiments/
     ├── lab5_flow_control.cpp               # Lab 5: Stop-and-Wait, Go-Back-N, Selective Repeat
     ├── lab6_7_error_control.cpp            # Lab 6-7: Alternating Bit Protocol & Loss Recovery
     ├── lab8_crc_lrc_vrc.cpp                # Lab 8: VRC, LRC, 2D Parity Matrix & CRC Modulo-2
-    └── lab9_hamming_code.cpp               # Lab 9: Hamming (7,4) SEC & Extended SEC-DED (8,4)
+    ├── lab9_hamming_code.cpp               # Lab 9: Hamming (7,4) SEC & Extended SEC-DED (8,4)
+    ├── lab10_csma_non_persistent.py        # Lab 10: Non-Persistent CSMA
+    ├── lab11_csma_cd_beb.py                # Lab 11: 1-Persistent & p-Persistent CSMA/CD with BEB
+    ├── lab12_rip_distance_vector.py        # Lab 12: Distance Vector Routing (RIP)
+    ├── lab13_ospf_link_state.py            # Lab 13: OSPF Link-State Routing (Dijkstra SPF)
+    └── lab14_tcp_echo_socket.py            # Lab 14: TCP/IP Echo Client-Server
 ```
 
 ---

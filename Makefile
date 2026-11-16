@@ -1,5 +1,5 @@
 # ==============================================================================
-#   Makefile for Computer Networks Laboratory (CS-504 / CS-501) Experiments 1-9
+#   Makefile for Computer Networks Laboratory (CS-504 / CS-501) Experiments 1-14
 #   Student: Aradhya Jain  |  Scholar No: 24112011111  |  Section: CSE-1
 #   Institution: MANIT Bhopal
 # ==============================================================================
@@ -12,7 +12,7 @@ BIN_DIR = bin
 SRC_DIR = src
 TARGET = $(BIN_DIR)/cn_labs_all
 
-.PHONY: all clean run lab1 lab2 lab3 lab4 lab5 lab6 lab7 lab8 lab9 test_python
+.PHONY: all clean run run_python lab1 lab2 lab3 lab4 lab5 lab6 lab7 lab8 lab9 lab10 lab11 lab12 lab13 lab14 test_python
 
 all: $(TARGET)
 
@@ -53,6 +53,23 @@ lab8: $(TARGET)
 
 lab9: $(TARGET)
 	@./$(TARGET) --lab 9
+
+lab10:
+	@python3 $(SRC_DIR)/lab10_csma_non_persistent.py
+
+lab11:
+	@python3 $(SRC_DIR)/lab11_csma_cd_beb.py
+
+lab12:
+	@python3 $(SRC_DIR)/lab12_rip_distance_vector.py
+
+lab13:
+	@python3 $(SRC_DIR)/lab13_ospf_link_state.py
+
+lab14:
+	@python3 $(SRC_DIR)/lab14_tcp_echo_socket.py
+
+run_python: lab10 lab11 lab12 lab13 lab14
 
 test_python:
 	@python3 cn_labs_1_to_9.py --all
