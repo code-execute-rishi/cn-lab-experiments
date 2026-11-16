@@ -1,0 +1,54 @@
+LAB 8: LRC, VRC AND CRC ERROR DETECTION METHODS
+===============================================
+
+QUESTION
+--------
+Aim: To design, implement, and benchmark Vertical Redundancy Check (VRC), Longitudinal Redundancy Check (LRC), 2D Parity, and Cyclic Redundancy Check (CRC) using Galois Field GF(2) polynomial division in Python.
+
+FILES
+-----
+- vrc_lrc.py: VRC, LRC and 2D parity.
+- crc.py: CRC: modulo-2 division, building the codeword and checking it at the receiver.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+vrc_lrc.py: same as Lab 7. VRC row parity + LRC column parity form a 2D grid; one wrong row and one wrong column point to the flipped bit, which is corrected.
+
+crc.py
+1. xor(a, b): bit-by-bit XOR of two equal-length strings.
+2. mod2div(dividend, divisor): take the first k bits (k = length of the divisor). For each remaining bit: if the leading bit is 1, XOR with the divisor; drop the leading bit and bring the next bit down. The last k-1 bits are the remainder.
+3. encode_crc(data, G): append r = k-1 zeros to the data, divide by G, and send data + remainder (the codeword).
+4. verify_crc(codeword, G): divide the received codeword by G. A remainder of all zeros means accept; anything else means an error.
+5. Demo: data 1101011011, G = 10011 (x^4 + x + 1). The clean codeword is accepted; a 1-bit error and a 4-bit burst error are both detected.
+
+HOW TO RUN
+----------
+No input is needed; the test data is built into each program.
+python3 vrc_lrc.py
+python3 crc.py
+
+VIVA QUESTIONS
+--------------
+Q1. What is CRC?
+A:  Cyclic Redundancy Check: the data is divided by a generator polynomial using modulo-2 (XOR) division, and the remainder is sent with the data.
+
+Q2. How is the CRC codeword made?
+A:  Append r zeros to the data (r = degree of the generator), divide by the generator, and replace the zeros with the remainder.
+
+Q3. How does the receiver check it?
+A:  It divides the received codeword by the same generator. A remainder of 0 means no error was detected.
+
+Q4. Why modulo-2 arithmetic?
+A:  Addition and subtraction are both XOR with no carries, which is simple and fast in hardware.
+
+Q5. Which errors does CRC detect?
+A:  All single-bit errors, all odd numbers of errors (when x+1 is a factor of G(x)), and all burst errors no longer than the degree r.
+
+Q6. CRC vs parity?
+A:  Parity misses even numbers of errors. CRC is much stronger, especially against burst errors, which is why Ethernet uses CRC-32.
+
+Q7. Give a standard generator polynomial.
+A:  CRC-4: x^4 + x + 1 (10011). Ethernet uses CRC-32.
+
+Q8. What is a burst error?
+A:  Two or more bits in a row (or close together) are wrong, often caused by noise on the line.

@@ -7,6 +7,19 @@
 - [`vrc_lrc.py`](vrc_lrc.py): VRC, LRC and 2D parity.
 - [`crc.py`](crc.py): CRC: modulo-2 division, building the codeword and checking it at the receiver.
 
+## Logic (How the Program Works)
+
+```text
+vrc_lrc.py: same as Lab 7. VRC row parity + LRC column parity form a 2D grid; one wrong row and one wrong column point to the flipped bit, which is corrected.
+
+crc.py
+1. xor(a, b): bit-by-bit XOR of two equal-length strings.
+2. mod2div(dividend, divisor): take the first k bits (k = length of the divisor). For each remaining bit: if the leading bit is 1, XOR with the divisor; drop the leading bit and bring the next bit down. The last k-1 bits are the remainder.
+3. encode_crc(data, G): append r = k-1 zeros to the data, divide by G, and send data + remainder (the codeword).
+4. verify_crc(codeword, G): divide the received codeword by G. A remainder of all zeros means accept; anything else means an error.
+5. Demo: data 1101011011, G = 10011 (x^4 + x + 1). The clean codeword is accepted; a 1-bit error and a 4-bit burst error are both detected.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

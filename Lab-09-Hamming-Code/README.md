@@ -6,6 +6,21 @@
 ## Files
 - [`hamming_code.py`](hamming_code.py): Hamming (7,4) encode and decode with the syndrome, and Extended (8,4) SEC-DED.
 
+## Logic (How the Program Works)
+
+```text
+hamming_code.py
+1. Hamming (7,4): 4 data bits need 3 parity bits (2^r >= m + r + 1 -> 8 >= 8).
+2. encode_74(): parity bits at positions 1, 2, 4: p1 = d1^d2^d4, p2 = d1^d3^d4, p4 = d2^d3^d4. Codeword [p1 p2 d1 p4 d2 d3 d4].
+3. decode_74(): recompute the checks s1 = b1^b3^b5^b7, s2 = b2^b3^b6^b7, s4 = b4^b5^b6^b7.
+   Syndrome = 4*s4 + 2*s2 + s1. 0 = no error, otherwise flip the bit at that position. Data = bits 3, 5, 6, 7.
+4. Extended SEC-DED (8,4): add p0 = XOR of all 7 bits.
+5. decode_84_secded(): syndrome != 0 and overall parity wrong -> single error, corrected.
+   syndrome != 0 and overall parity correct -> double error, detected, not corrected.
+   syndrome 0 and overall parity wrong -> only p0 is wrong.
+6. Demo: data 1011, bit 6 flipped -> syndrome = 6 -> corrected. Bits 3 and 7 flipped -> double-bit error detected.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

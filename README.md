@@ -3,7 +3,7 @@
 [![Python 3](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Python programs for the Computer Networks Laboratory at MANIT Bhopal. Each lab has its own folder with the **question (aim)**, the **code**, **how to run it**, the **output**, and **viva questions with answers**.
+Python programs for the Computer Networks Laboratory at MANIT Bhopal. Each lab has its own folder with the **question (aim)**, the **code** (one file per program), the **logic of the code**, **how to run it**, the **output**, and **viva questions with answers**. Every folder also has a plain-text **`lab.txt`** with the question, logic and viva questions.
 
 ---
 
@@ -162,7 +162,7 @@ cn-lab-experiments/
 └── archive/cpp-version/                   earlier C++ version of Labs 1–9 (kept for reference)
 ```
 
-Each lab folder has its own `README.md` with the question, code, how to run, output and viva questions.
+Each lab folder has its own `README.md` with the question, code logic, how to run, output and viva questions, plus a plain-text `lab.txt` with the question, the logic of the code and the viva questions (handy for printing or revision).
 
 ---
 

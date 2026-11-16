@@ -1,0 +1,54 @@
+LAB 9: HAMMING CODE FOR ERROR DETECTION AND CORRECTION
+======================================================
+
+QUESTION
+--------
+Aim: To design and implement Hamming (7,4) Single Error Correction (SEC) and Extended Hamming (8,4) SEC-DED (Single Error Correction, Double Error Detection) block codes with character-level ASCII streaming forward error correction in Python.
+
+FILES
+-----
+- hamming_code.py: Hamming (7,4) encode and decode with the syndrome, and Extended (8,4) SEC-DED.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+hamming_code.py
+1. Hamming (7,4): 4 data bits need 3 parity bits (2^r >= m + r + 1 -> 8 >= 8).
+2. encode_74(): parity bits at positions 1, 2, 4: p1 = d1^d2^d4, p2 = d1^d3^d4, p4 = d2^d3^d4. Codeword [p1 p2 d1 p4 d2 d3 d4].
+3. decode_74(): recompute the checks s1 = b1^b3^b5^b7, s2 = b2^b3^b6^b7, s4 = b4^b5^b6^b7.
+   Syndrome = 4*s4 + 2*s2 + s1. 0 = no error, otherwise flip the bit at that position. Data = bits 3, 5, 6, 7.
+4. Extended SEC-DED (8,4): add p0 = XOR of all 7 bits.
+5. decode_84_secded(): syndrome != 0 and overall parity wrong -> single error, corrected.
+   syndrome != 0 and overall parity correct -> double error, detected, not corrected.
+   syndrome 0 and overall parity wrong -> only p0 is wrong.
+6. Demo: data 1011, bit 6 flipped -> syndrome = 6 -> corrected. Bits 3 and 7 flipped -> double-bit error detected.
+
+HOW TO RUN
+----------
+No input is needed; the test data is built into each program.
+python3 hamming_code.py
+
+VIVA QUESTIONS
+--------------
+Q1. What is a Hamming code?
+A:  A block code that adds parity bits so the receiver can find and correct a single-bit error.
+
+Q2. Parity equations for Hamming (7,4)?
+A:  p1 = d1 ⊕ d2 ⊕ d4, p2 = d1 ⊕ d3 ⊕ d4, p4 = d2 ⊕ d3 ⊕ d4.
+
+Q3. How is the syndrome formed?
+A:  S = (s4 s2 s1) in binary, where each s is a recomputed parity check. Its value is the error position (0 means no error).
+
+Q4. Minimum Hamming distance of (7,4)?
+A:  3. It can correct 1 error or detect 2 errors, but not both.
+
+Q5. What does SEC-DED add?
+A:  An overall parity bit P0 over all 7 bits, giving distance 4: it corrects 1 error and detects 2.
+
+Q6. How does SEC-DED tell 1 error from 2?
+A:  Syndrome ≠ 0 and overall parity wrong → 1 error (correct it). Syndrome ≠ 0 and overall parity correct → 2 errors (cannot correct).
+
+Q7. Code rate of Hamming (7,4)?
+A:  4/7: 4 data bits in every 7 bits sent.
+
+Q8. Where is Hamming code used?
+A:  ECC memory (RAM) and other places where resending is not possible, so errors must be fixed at the receiver.

@@ -6,6 +6,24 @@
 ## Files
 - [`rip_distance_vector.py`](rip_distance_vector.py): Bellman-Ford distance vector routing on 5 routers, count-to-infinity, and split horizon with poisoned reverse.
 
+## Logic (How the Program Works)
+
+```text
+rip_distance_vector.py
+1. Each router keeps a table: destination -> (metric, next hop), plus its neighbours and link costs. 16 = infinity (unreachable).
+2. generate_advertisement(neighbour): send my table to that neighbour, except for routes that go through that neighbour:
+   poisoned reverse -> advertise them with metric 16; split horizon only -> leave them out; neither -> send them normally.
+3. receive_advertisement(): Bellman-Ford. For each destination: new = min(link cost + advertised metric, 16).
+   - new destination -> add it (if < 16);
+   - my current route goes through this neighbour -> take the new value even if it is worse;
+   - otherwise switch only if the new route is shorter.
+4. converge(): each round every router advertises to every neighbour, then all updates are applied. Stop when a round changes nothing; return the number of rounds.
+5. Phase 1: 5 routers (A-B 1, B-C 1, C-D 1, D-E 1, A-C 3, B-D 4) converge in 4 rounds; all tables are printed.
+6. Phase 2: chain A-B-C, link A-B cut.
+   Without split horizon, routers keep learning bad routes from each other: count to infinity (15 rounds).
+   With split horizon + poisoned reverse: fixed in 2 rounds.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

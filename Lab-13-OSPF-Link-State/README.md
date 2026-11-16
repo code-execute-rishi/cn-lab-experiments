@@ -6,6 +6,21 @@
 ## Files
 - [`ospf_link_state.py`](ospf_link_state.py): LSA flooding, the LSDB, Dijkstra shortest paths and rerouting after a link cost change.
 
+## Logic (How the Program Works)
+
+```text
+ospf_link_state.py
+1. Each router knows only its own links (neighbour -> cost).
+2. originate_lsa(): the router makes a Link-State Advertisement with a new sequence number listing its links.
+3. synchronize_lsdb() (flooding): every router's LSA is installed in every router (newer sequence numbers replace older ones), so all routers have the same Link-State Database, i.e. the same map.
+4. run_dijkstra_spf(): Dijkstra from this router.
+   - distance to itself 0, all others infinity; use a min-heap;
+   - take the closest unvisited router, and for each of its links: if going through it is shorter, update the distance and remember the parent.
+5. For each destination, follow the parents back to get the full path; the first router after the source is the next hop.
+6. Phase 1: 6 routers (R1-R6); print the forwarding tables of R1 and R3.
+7. Phase 2: the R1-R2 cost changes from 10 to 70. New LSAs are flooded and Dijkstra runs again, so R1 now routes through R3.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

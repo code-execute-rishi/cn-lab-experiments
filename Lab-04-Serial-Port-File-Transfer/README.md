@@ -15,6 +15,27 @@ pip3 install pyserial
 brew install socat             # macOS   (Linux: sudo apt install socat)
 ```
 
+## Logic (How the Program Works)
+
+```text
+socat creates two linked virtual serial ports, /tmp/ttyV0 and /tmp/ttyV1, like a null-modem cable.
+
+sender.py
+1. Take the file name from the command line and find its size.
+2. Open serial port /tmp/ttyV0 at 9600 baud and wait 1 second so the receiver is ready.
+3. Send a header line "filename|size\n".
+4. Read the file 64 bytes at a time and write each chunk to the serial port, counting the bytes sent.
+5. Close the port.
+
+receiver.py
+1. Open serial port /tmp/ttyV1 (timeout 5 s).
+2. Read 1 byte at a time until "\n" to get the header, then split it into the file name and size.
+3. Read 64-byte chunks until exactly `size` bytes have arrived (or the read times out).
+4. Write the bytes to <output folder>/<file name> and close the port.
+
+Checking: diff shows no difference, the SHA-256 of both files is the same, and the hexdumps match.
+```
+
 ## How to Run
 ```bash
 # Terminal 1: create the virtual serial cable

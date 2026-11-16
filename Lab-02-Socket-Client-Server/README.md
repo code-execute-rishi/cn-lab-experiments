@@ -7,6 +7,24 @@
 - [`server.py`](server.py): binds 127.0.0.1:65432, accepts one client, prints its messages and sends replies typed on the server.
 - [`client.py`](client.py): connects to the server and exchanges messages until `/quit`.
 
+## Logic (How the Program Works)
+
+```text
+server.py
+1. Create a TCP socket: socket(AF_INET, SOCK_STREAM). Set SO_REUSEADDR so the port can be reused right away.
+2. bind() to 127.0.0.1:65432, then listen().
+3. accept() blocks until a client connects, then returns a new socket (conn) and the client's address.
+4. Loop: recv(1024). If nothing came or the text is "/quit", print "Client disconnected" and stop.
+5. Otherwise print [CLIENT] <message>, read a reply with input(), and sendall() it. If the reply is "/quit", stop.
+
+client.py
+1. Create a TCP socket and connect() to 127.0.0.1:65432 (the OS picks the client's port).
+2. Loop: read a message with input() and sendall() it. If it is "/quit", stop.
+3. recv() the server's reply. If it is empty or "/quit", the server has left; otherwise print [SERVER] <reply>.
+
+The two sides take turns: each one waits for the other's message before replying.
+```
+
 ## How to Run
 Open two terminals in this folder:
 ```bash

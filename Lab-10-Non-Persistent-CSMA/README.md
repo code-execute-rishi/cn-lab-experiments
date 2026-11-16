@@ -6,6 +6,22 @@
 ## Files
 - [`csma_non_persistent.py`](csma_non_persistent.py): Non-Persistent CSMA simulation: throughput, collisions and delay across offered loads.
 
+## Logic (How the Program Works)
+
+```text
+csma_non_persistent.py
+1. Setup: 10 stations, 1 Mbps channel, 1000-bit frames (1 ms each), propagation delay tau = 10 us, slot = 2*tau. A fixed random seed gives the same result every run.
+2. Time moves in 10 us steps for 0.4 s. Each station gets new frames at random times (Poisson arrivals).
+3. At each step, every station whose backoff timer has run out senses the channel:
+   - channel busy -> NON-persistent rule: do not keep listening; wait a random 1-16 slots and try again later;
+   - channel idle -> ready to transmit.
+4. If exactly one station is ready, its frame goes through (the channel is busy for frame time + tau) and its delay is recorded.
+5. If two or more are ready at the same time, it is a collision: each of them picks a new random backoff.
+6. Results: offered load G = frames generated x frame time / duration; throughput S = frames delivered x frame time / duration.
+   Theory: S = G e^(-aG) / (G(1+2a) + e^(-aG)), with a = tau / frame time.
+7. The program repeats this for arrival rates 100 to 4000 frames/s and prints G, S, theory, collisions and delay.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

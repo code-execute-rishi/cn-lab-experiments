@@ -47,6 +47,18 @@ This lab has no program. Part A is Linux commands; Part B is done in Cisco Packe
 
 **Result:** The ping got 4 replies with 0% packet loss. Only a switch is needed (no router) because all PCs are on the same 192.168.1.0/24 subnet.
 
+## Logic (How the Program Works)
+
+```text
+This lab has no program. How the network works:
+1. Place one 2960 switch and four PCs; connect every PC to its own switch port with a straight-through cable (star topology).
+2. Give every PC a static IP in the same subnet (192.168.1.x / 255.255.255.0), so no router is needed.
+3. When PC0 pings PC2, PC0 first sends an ARP broadcast ("who has 192.168.1.2?"). The switch floods it to all ports; PC2 replies with its MAC address.
+4. The switch learns each PC's MAC address from the source of every frame and stores it in its MAC table (MAC -> port).
+5. After that, the ICMP Echo Request/Reply frames go only to the right port. 4 replies and 0% loss means the hosts can talk.
+6. Linux commands (Part A) run in the shell; the shell passes them to the kernel, which does the work.
+```
+
 ## Viva Questions
 
 1. **What is a star topology?**

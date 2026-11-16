@@ -1,0 +1,69 @@
+LAB 4: PC TO PC FILE TRANSFER USING SERIAL PORT
+===============================================
+
+QUESTION
+--------
+Aim: PC to PC file transfer using serial port: send a file from one machine to another over a serial link, byte for byte, and prove the received file is identical (checksum + hexdump + diff).
+
+FILES
+-----
+- sender.py: opens /tmp/ttyV0, sends a header filename|size, then the file in 64-byte chunks.
+- receiver.py: opens /tmp/ttyV1, reads the header and then exactly size bytes, and saves the file.
+- hello.txt: the 256-byte test file.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+socat creates two linked virtual serial ports, /tmp/ttyV0 and /tmp/ttyV1, like a null-modem cable.
+
+sender.py
+1. Take the file name from the command line and find its size.
+2. Open serial port /tmp/ttyV0 at 9600 baud and wait 1 second so the receiver is ready.
+3. Send a header line "filename|size\n".
+4. Read the file 64 bytes at a time and write each chunk to the serial port, counting the bytes sent.
+5. Close the port.
+
+receiver.py
+1. Open serial port /tmp/ttyV1 (timeout 5 s).
+2. Read 1 byte at a time until "\n" to get the header, then split it into the file name and size.
+3. Read 64-byte chunks until exactly `size` bytes have arrived (or the read times out).
+4. Write the bytes to <output folder>/<file name> and close the port.
+
+Checking: diff shows no difference, the SHA-256 of both files is the same, and the hexdumps match.
+
+HOW TO RUN
+----------
+# Terminal 1: create the virtual serial cable
+socat -d -d pty,raw,echo=0,link=/tmp/ttyV0 pty,raw,echo=0,link=/tmp/ttyV1
+
+# Terminal 2: receiver (PC B)
+mkdir -p recv
+python3 receiver.py ./recv
+
+# Terminal 3: sender (PC A)
+python3 sender.py hello.txt
+
+VIVA QUESTIONS
+--------------
+Q1. What is serial communication?
+A:  Data is sent one bit at a time over a single line, as opposed to parallel, where many bits go together on several lines.
+
+Q2. What is baud rate?
+A:  The number of signal changes per second. Here it is 9600 baud; both sides must use the same rate.
+
+Q3. What is a null-modem cable?
+A:  A cable that crosses TX and RX so two computers can talk directly over serial ports. socat creates a virtual one here.
+
+Q4. Why send a header first?
+A:  So the receiver knows the file name and exactly how many bytes to read, and therefore when the file has ended.
+
+Q5. How do you prove the file arrived correctly?
+A:  diff shows no differences, the SHA-256 checksums match, and the hexdumps (xxd) are identical.
+
+Q6. What is a UART?
+A:  Universal Asynchronous Receiver/Transmitter: the hardware that converts bytes to serial bits, with start and stop bits around each byte.
+
+Q7. Synchronous vs asynchronous transmission?
+A:  Synchronous uses a shared clock signal. Asynchronous (like UART) has no shared clock; start and stop bits mark each byte.
+
+Q8. What is the timeout in serial.Serial for?
+A:  read() returns after that many seconds even if no data came, so the program does not hang forever.

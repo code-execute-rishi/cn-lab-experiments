@@ -1,0 +1,46 @@
+LAB 1: LINUX COMMANDS & STAR TOPOLOGY IN CISCO PACKET TRACER
+============================================================
+
+QUESTION
+--------
+Objective (lab handout): Configuring a simple network topology using a switch.
+
+Aim: To get hands-on with basic Linux/Unix commands and then design a working star topology network in Cisco Packet Tracer, assign IPs to the hosts and check that they can actually talk to each other.
+
+This lab has no program. Part A is Linux commands; Part B is done in Cisco Packet Tracer.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+This lab has no program. How the network works:
+1. Place one 2960 switch and four PCs; connect every PC to its own switch port with a straight-through cable (star topology).
+2. Give every PC a static IP in the same subnet (192.168.1.x / 255.255.255.0), so no router is needed.
+3. When PC0 pings PC2, PC0 first sends an ARP broadcast ("who has 192.168.1.2?"). The switch floods it to all ports; PC2 replies with its MAC address.
+4. The switch learns each PC's MAC address from the source of every frame and stores it in its MAC table (MAC -> port).
+5. After that, the ICMP Echo Request/Reply frames go only to the right port. 4 replies and 0% loss means the hosts can talk.
+6. Linux commands (Part A) run in the shell; the shell passes them to the kernel, which does the work.
+
+VIVA QUESTIONS
+--------------
+Q1. What is a star topology?
+A:  Every device connects to one central device (a switch or hub). If one cable or PC fails, the rest keep working; if the central device fails, the whole network goes down.
+
+Q2. Why is no router needed here?
+A:  All PCs are on the same subnet (192.168.1.0/24). A router is needed only to send traffic between different networks.
+
+Q3. Switch vs hub?
+A:  A hub sends every frame to all ports. A switch learns MAC addresses and sends each frame only to the port where the destination is connected.
+
+Q4. How does a switch learn MAC addresses?
+A:  It reads the source MAC of every incoming frame and stores it with the port number in its MAC (CAM) table.
+
+Q5. What does ping use?
+A:  ICMP Echo Request and Echo Reply messages. Before the first ping, ARP finds the MAC address for the destination IP.
+
+Q6. Which cable connects a PC to a switch?
+A:  A straight-through cable. A crossover cable is used between similar devices, such as PC to PC or switch to switch.
+
+Q7. What does the subnet mask 255.255.255.0 mean?
+A:  The first 24 bits are the network part, so hosts 192.168.1.1–192.168.1.254 are on the same network.
+
+Q8. Kernel vs shell?
+A:  The kernel controls the hardware, memory and processes. The shell (e.g. Bash) reads your commands and asks the kernel to run them.

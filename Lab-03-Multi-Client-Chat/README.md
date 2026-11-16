@@ -7,6 +7,25 @@
 - [`chat_server.py`](chat_server.py): binds 127.0.0.1:5050, starts one thread per client and broadcasts every message to the other clients.
 - [`chat_client.py`](chat_client.py): sends your name first, then one thread receives messages while the main thread sends what you type.
 
+## Logic (How the Program Works)
+
+```text
+chat_server.py
+1. Keep a shared dictionary clients = {socket: name}, protected by a threading.Lock.
+2. bind() to 127.0.0.1:5050, listen(), then loop forever on accept().
+3. For every new client, start a new thread running handle_client(); the main thread goes straight back to accept().
+4. handle_client(): the first message received is the client's name. Add it to the dictionary (under the lock) and broadcast "*** name joined the chat ***".
+5. Then loop: recv() a message. If it is empty or "/quit", leave the loop. Otherwise print it and broadcast "[name] text" to everyone else.
+6. When the client leaves: remove it from the dictionary, close its socket, and broadcast "*** name left the chat ***".
+7. broadcast(): under the lock, send the message to every client except the sender.
+
+chat_client.py
+1. Ask for a name, connect() to the server and send the name.
+2. Start a background thread that keeps calling recv() and prints whatever arrives.
+3. The main thread keeps reading input ("you> ") and sending it. "/quit" ends the chat.
+Because sending and receiving run in different threads, messages can arrive while you are typing (full duplex).
+```
+
 ## How to Run
 Open three terminals in this folder:
 ```bash

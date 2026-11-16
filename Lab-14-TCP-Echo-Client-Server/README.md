@@ -6,6 +6,23 @@
 ## Files
 - [`tcp_echo_socket.py`](tcp_echo_socket.py): Multi-threaded TCP echo server and client in one program, with echo checks and RTT measurement.
 
+## Logic (How the Program Works)
+
+```text
+tcp_echo_socket.py (server and client in one program)
+Server
+1. Create a TCP socket, set SO_REUSEADDR, bind() to 127.0.0.1:65432, listen(10).
+2. A background thread loops on accept(); every client gets its own handler thread.
+3. Handler: recv() data into a buffer. While the buffer contains a newline, cut off one message and send it straight back with the newline (echo). Count the bytes echoed (under a lock).
+Client
+1. Connect to the server.
+2. For each message: add "\n" (message boundary), start a timer, sendall(), and recv() until a newline comes back. Stop the timer: that time is the RTT.
+3. Compare the echoed text with the sent text (MATCH / MISMATCH).
+Demo
+1. Phase 1: one client sends 5 messages and prints each echo and its RTT.
+2. Phase 2: 4 client threads at the same time, 3 messages each; print each one's average RTT and the total bytes echoed. Then stop the server.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

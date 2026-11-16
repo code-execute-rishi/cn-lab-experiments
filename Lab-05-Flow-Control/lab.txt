@@ -1,0 +1,66 @@
+LAB 5: FLOW CONTROL PROTOCOLS (STOP-AND-WAIT & SLIDING WINDOW)
+==============================================================
+
+QUESTION
+--------
+Aim: Implement flow control protocols, Stop-and-Wait and Sliding Window (Go-Back-N), and prove both recover correctly under frame loss and ACK loss, across more than one loss pattern.
+
+FILES
+-----
+- stop_and_wait.py: sends 8 frames one at a time. A lost frame or lost ACK causes a timeout and a retransmission; the receiver discards duplicates.
+- sliding_window.py: Go-Back-N with 12 frames. On a loss, the sender resends from the lost frame.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+stop_and_wait.py (8 frames, F0-F7)
+1. The scenario number chooses which frames and which ACKs are lost. Each one is lost only the first time it is sent.
+2. For each frame, repeat:
+   a. Send the frame (attempt n) and count one transmission.
+   b. If the channel loses the frame: timeout, attempt + 1, send again.
+   c. The receiver checks its list: a new frame is buffered; a frame it already has is a duplicate, so it is discarded and the ACK is sent again.
+   d. If the ACK is lost: timeout, attempt + 1, send again.
+   e. If the ACK arrives: move on to the next frame.
+3. At the end: retransmits = transmissions - 8, and check that every frame arrived exactly once and in order.
+
+sliding_window.py (Go-Back-N, 12 frames)
+1. The scenario chooses the window size W and which frames are lost (each only once).
+2. base = first frame not yet acknowledged; next_seq = next frame to send.
+3. Each round: send frames while next_seq < base + W (the window is [base .. base+W-1]).
+4. The receiver checks frames in order from base:
+   - a good frame is accepted and ACKed;
+   - a lost frame: the receiver throws it away along with everything after it; the sender times out and goes back: base = next_seq = lost frame (one Go-Back-N round).
+5. If the whole round arrived, the window slides: base moves past the accepted frames.
+6. At the end, print the total frame-sends, Go-Back-N rounds, and the delivered order.
+
+HOW TO RUN
+----------
+python3 stop_and_wait.py 1     # Scenario A: F2 lost once, ACK4 lost once
+python3 stop_and_wait.py 2     # Scenario B: F1, F5 lost once; ACK3, ACK6 lost once
+python3 sliding_window.py 1    # Scenario A: window 4, loss at F3
+python3 sliding_window.py 2    # Scenario B: window 3, losses at F2 and F8
+
+VIVA QUESTIONS
+--------------
+Q1. What is flow control?
+A:  It stops a fast sender from overwhelming a slow receiver, by making the sender wait for permission (ACKs) before sending more.
+
+Q2. How does Stop-and-Wait work?
+A:  Send one frame, start a timer, wait for its ACK. If the timer expires, send the same frame again.
+
+Q3. How does the receiver detect a duplicate frame?
+A:  By its sequence number. If an ACK was lost, the sender resends a frame the receiver already has; the receiver discards it and resends the ACK.
+
+Q4. Efficiency of Stop-and-Wait?
+A:  η = 1 / (1 + 2a), where a = propagation time / transmission time. It is poor on long or fast links.
+
+Q5. How does Go-Back-N work?
+A:  The sender can have up to W unacknowledged frames. If frame i is lost, the receiver discards everything after it and the sender resends from frame i.
+
+Q6. Go-Back-N vs Selective Repeat?
+A:  Go-Back-N resends the lost frame and all frames after it (receiver window 1). Selective Repeat resends only the lost frame; the receiver buffers out-of-order frames.
+
+Q7. Maximum window size with m-bit sequence numbers?
+A:  Go-Back-N: 2^m − 1. Selective Repeat: 2^(m−1).
+
+Q8. Why did Go-Back-N Scenario B need more frame-sends?
+A:  Two losses mean two Go-Back-N rounds, and each round resends the frames after the lost one: 16 sends for 12 frames, against 13 with one loss.

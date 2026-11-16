@@ -8,6 +8,34 @@
 - [`stop_and_wait_arq.py`](stop_and_wait_arq.py): Stop-and-Wait ARQ with 1-bit sequence numbers, frame corruption and ACK loss.
 - [`sliding_window_arq.py`](sliding_window_arq.py): Go-Back-N and Selective Repeat ARQ.
 
+## Logic (How the Program Works)
+
+```text
+parity_check.py
+1. generate_parity(data, mode): count the 1s. Even parity adds '1' if the count is odd (to make it even), else '0'. Odd parity does the opposite.
+2. The codeword is data + parity bit. verify_parity() recomputes the parity of the data part and compares it with the last bit.
+3. inject_bit_errors() flips chosen bits to simulate noise.
+4. Tests: 1011001 with even and odd parity; 1 flipped bit is detected; 2 flipped bits are NOT detected (the count of 1s is still even).
+
+stop_and_wait_arq.py
+1. Sender, Channel and Receiver are classes. The sender uses a 1-bit sequence number (0, 1, 0, ...).
+2. The sender sends the frame and waits for ACK = 1 - seq. If the ACK is correct, it flips seq; if not (timeout), it resends.
+3. The channel can corrupt the frame on the first try (the receiver sees a bad checksum, discards it and sends no ACK) or drop the ACK on the first try.
+4. The receiver accepts a frame only if seq equals the expected value, then flips expected and sends ACK(expected). A repeated seq is a duplicate: discard it and resend the ACK.
+5. 3 packets in 3 scenarios: normal, corrupted frame, lost ACK -> 5 transmissions, 2 retransmissions.
+
+sliding_window_arq.py
+Go-Back-N (W = 4, 8 frames, F2 lost once)
+1. Send every frame in the window.
+2. The receiver accepts frames only in order and sends a cumulative ACK.
+3. When F2 is lost, the sender times out and resends the whole window starting from F2.
+Selective Repeat (W = 4, 8 frames, F2 lost once)
+1. Send every frame in the window that is not ACKed yet; each frame is ACKed on its own.
+2. Frames after the lost one are kept in the receiver's buffer instead of being thrown away.
+3. When the timer for F2 expires, only F2 is resent. Then the buffered frames are delivered in order and the window slides.
+Result: Selective Repeat needs fewer retransmissions than Go-Back-N.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

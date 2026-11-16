@@ -7,6 +7,30 @@
 - [`stop_and_wait.py`](stop_and_wait.py): sends 8 frames one at a time. A lost frame or lost ACK causes a timeout and a retransmission; the receiver discards duplicates.
 - [`sliding_window.py`](sliding_window.py): Go-Back-N with 12 frames. On a loss, the sender resends from the lost frame.
 
+## Logic (How the Program Works)
+
+```text
+stop_and_wait.py (8 frames, F0-F7)
+1. The scenario number chooses which frames and which ACKs are lost. Each one is lost only the first time it is sent.
+2. For each frame, repeat:
+   a. Send the frame (attempt n) and count one transmission.
+   b. If the channel loses the frame: timeout, attempt + 1, send again.
+   c. The receiver checks its list: a new frame is buffered; a frame it already has is a duplicate, so it is discarded and the ACK is sent again.
+   d. If the ACK is lost: timeout, attempt + 1, send again.
+   e. If the ACK arrives: move on to the next frame.
+3. At the end: retransmits = transmissions - 8, and check that every frame arrived exactly once and in order.
+
+sliding_window.py (Go-Back-N, 12 frames)
+1. The scenario chooses the window size W and which frames are lost (each only once).
+2. base = first frame not yet acknowledged; next_seq = next frame to send.
+3. Each round: send frames while next_seq < base + W (the window is [base .. base+W-1]).
+4. The receiver checks frames in order from base:
+   - a good frame is accepted and ACKed;
+   - a lost frame: the receiver throws it away along with everything after it; the sender times out and goes back: base = next_seq = lost frame (one Go-Back-N round).
+5. If the whole round arrived, the window slides: base moves past the accepted frames.
+6. At the end, print the total frame-sends, Go-Back-N rounds, and the delivered order.
+```
+
 ## How to Run
 ```bash
 python3 stop_and_wait.py 1     # Scenario A: F2 lost once, ACK4 lost once

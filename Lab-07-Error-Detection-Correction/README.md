@@ -7,6 +7,27 @@
 - [`vrc_lrc.py`](vrc_lrc.py): VRC (row parity), LRC (column parity) and the 2D parity matrix with single-bit correction.
 - [`hamming_code.py`](hamming_code.py): Hamming (7,4) single error correction and Extended (8,4) SEC-DED.
 
+## Logic (How the Program Works)
+
+```text
+vrc_lrc.py (2D parity)
+1. calculate_vrc(): even parity bit of one data word (row).
+2. construct_2d_parity(): add the VRC bit to every word (one row each), then add an LRC row = even parity of every column.
+3. The channel flips one bit (row 1, column 4).
+4. verify_and_correct_2d(): list the rows whose VRC is wrong and the columns whose LRC is wrong.
+5. If exactly one row and one column are wrong, the error is where they cross: flip that bit back.
+
+hamming_code.py
+1. encode_74(): bits are stored at positions 1-7. Parity: p1 = d1^d2^d4, p2 = d1^d3^d4, p4 = d2^d3^d4. Layout: [p1 p2 d1 p4 d2 d3 d4].
+2. decode_74(): s1 = b1^b3^b5^b7, s2 = b2^b3^b6^b7, s4 = b4^b5^b6^b7. Syndrome = 4*s4 + 2*s2 + s1.
+3. Syndrome 0 means no error; otherwise it is the position of the wrong bit, so flip it. Data = bits 3, 5, 6, 7.
+4. encode_84_secded(): add p0 = XOR of all 7 bits (overall parity).
+5. decode_84_secded(): check the syndrome and the overall parity together:
+   syndrome 0 and parity OK -> no error; syndrome != 0 and parity wrong -> 1 error, corrected;
+   syndrome != 0 and parity OK -> 2 errors, detected but not corrected; syndrome 0 and parity wrong -> p0 itself is wrong.
+6. Demo: data 1011, bit 6 flipped -> syndrome 6 -> corrected. Bits 3 and 7 flipped -> double error detected.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash

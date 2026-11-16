@@ -1,0 +1,63 @@
+LAB 2: SOCKET PROGRAMMING (CLIENT–SERVER)
+=========================================
+
+QUESTION
+--------
+Aim: To learn the basics of socket programming and the binding of a client and server machine, and to write a program in which the client and the server send messages to each other.
+
+FILES
+-----
+- server.py: binds 127.0.0.1:65432, accepts one client, prints its messages and sends replies typed on the server.
+- client.py: connects to the server and exchanges messages until /quit.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+server.py
+1. Create a TCP socket: socket(AF_INET, SOCK_STREAM). Set SO_REUSEADDR so the port can be reused right away.
+2. bind() to 127.0.0.1:65432, then listen().
+3. accept() blocks until a client connects, then returns a new socket (conn) and the client's address.
+4. Loop: recv(1024). If nothing came or the text is "/quit", print "Client disconnected" and stop.
+5. Otherwise print [CLIENT] <message>, read a reply with input(), and sendall() it. If the reply is "/quit", stop.
+
+client.py
+1. Create a TCP socket and connect() to 127.0.0.1:65432 (the OS picks the client's port).
+2. Loop: read a message with input() and sendall() it. If it is "/quit", stop.
+3. recv() the server's reply. If it is empty or "/quit", the server has left; otherwise print [SERVER] <reply>.
+
+The two sides take turns: each one waits for the other's message before replying.
+
+HOW TO RUN
+----------
+Open two terminals in this folder:
+python3 server.py      # Terminal 1
+python3 client.py      # Terminal 2
+Type a message in the client, then a reply in the server. Type /quit in the client to end.
+
+VIVA QUESTIONS
+--------------
+Q1. What is a socket?
+A:  One end of a two-way connection between two programs. It is identified by an IP address and a port number.
+
+Q2. Order of calls on the server and the client?
+A:  Server: socket() → bind() → listen() → accept() → recv()/send() → close(). Client: socket() → connect() → send()/recv() → close().
+
+Q3. Why does only the server call bind()?
+A:  The server needs a fixed, known address so clients can find it. The client gets a random free (ephemeral) port from the OS when it calls connect().
+
+Q4. What does accept() return?
+A:  A new socket for that client connection, plus the client's address (IP, port). The original socket keeps listening.
+
+Q5. TCP vs UDP?
+A:  TCP (SOCK_STREAM) is connection-oriented, reliable and in order, with a 3-way handshake. UDP (SOCK_DGRAM) is connectionless and faster, with no delivery guarantee.
+
+Q6. What is the 3-way handshake?
+A:  SYN → SYN-ACK → ACK. It happens before accept() returns on the server.
+
+Q7. Why encode() and decode()?
+A:  Sockets send bytes, not strings. encode() turns a string into bytes; decode() turns received bytes back into a string.
+
+Q8. What does SO_REUSEADDR do?
+A:  Lets the server reuse the port immediately after restarting, instead of waiting for the old connection's TIME_WAIT to end.
+
+Q9. What is 127.0.0.1?
+A:  The loopback address, meaning this same machine. Use the LAN IP instead to connect from another computer.

@@ -1,0 +1,62 @@
+LAB 7: ERROR DETECTION & CORRECTION METHODS
+===========================================
+
+QUESTION
+--------
+Aim: To implement, test, and comparatively evaluate Linear Error Detection and Forward Error Correction algorithms at the Data Link Layer in Python: Vertical Redundancy Check (VRC), Longitudinal Redundancy Check (LRC), 2D Parity Matrix, and Hamming (7,4) Code.
+
+FILES
+-----
+- vrc_lrc.py: VRC (row parity), LRC (column parity) and the 2D parity matrix with single-bit correction.
+- hamming_code.py: Hamming (7,4) single error correction and Extended (8,4) SEC-DED.
+
+LOGIC (HOW THE PROGRAM WORKS)
+-----------------------------
+vrc_lrc.py (2D parity)
+1. calculate_vrc(): even parity bit of one data word (row).
+2. construct_2d_parity(): add the VRC bit to every word (one row each), then add an LRC row = even parity of every column.
+3. The channel flips one bit (row 1, column 4).
+4. verify_and_correct_2d(): list the rows whose VRC is wrong and the columns whose LRC is wrong.
+5. If exactly one row and one column are wrong, the error is where they cross: flip that bit back.
+
+hamming_code.py
+1. encode_74(): bits are stored at positions 1-7. Parity: p1 = d1^d2^d4, p2 = d1^d3^d4, p4 = d2^d3^d4. Layout: [p1 p2 d1 p4 d2 d3 d4].
+2. decode_74(): s1 = b1^b3^b5^b7, s2 = b2^b3^b6^b7, s4 = b4^b5^b6^b7. Syndrome = 4*s4 + 2*s2 + s1.
+3. Syndrome 0 means no error; otherwise it is the position of the wrong bit, so flip it. Data = bits 3, 5, 6, 7.
+4. encode_84_secded(): add p0 = XOR of all 7 bits (overall parity).
+5. decode_84_secded(): check the syndrome and the overall parity together:
+   syndrome 0 and parity OK -> no error; syndrome != 0 and parity wrong -> 1 error, corrected;
+   syndrome != 0 and parity OK -> 2 errors, detected but not corrected; syndrome 0 and parity wrong -> p0 itself is wrong.
+6. Demo: data 1011, bit 6 flipped -> syndrome 6 -> corrected. Bits 3 and 7 flipped -> double error detected.
+
+HOW TO RUN
+----------
+No input is needed; the test data is built into each program.
+python3 vrc_lrc.py
+python3 hamming_code.py
+
+VIVA QUESTIONS
+--------------
+Q1. Error detection vs error correction?
+A:  Detection only finds that an error happened (then the frame is resent). Correction (FEC) also finds where it is and fixes it at the receiver.
+
+Q2. What is VRC?
+A:  Vertical Redundancy Check: one parity bit per character. It detects odd numbers of bit errors.
+
+Q3. What is LRC?
+A:  Longitudinal Redundancy Check: a parity bit for each bit position across a block of characters, forming a Block Check Character.
+
+Q4. How does a 2D parity matrix correct a single bit?
+A:  The bad row (from VRC) and the bad column (from LRC) cross at the flipped bit, so the receiver flips it back.
+
+Q5. When does 2D parity fail?
+A:  When 4 errors form a rectangle: every row and column still has correct parity, so the error is not detected.
+
+Q6. What is the Hamming bound?
+A:  With r parity bits for m data bits: 2^r ≥ m + r + 1. For m = 4, r = 3.
+
+Q7. Where are the Hamming parity bits placed?
+A:  At positions that are powers of 2: 1, 2 and 4. Data bits go in positions 3, 5, 6 and 7.
+
+Q8. What does the syndrome tell you?
+A:  0 means no error. Otherwise, its decimal value is the position of the wrong bit.

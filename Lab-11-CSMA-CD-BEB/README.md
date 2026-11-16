@@ -6,6 +6,22 @@
 ## Files
 - [`csma_cd_protocols.py`](csma_cd_protocols.py): 1-persistent and p-persistent CSMA/CD with truncated BEB under light, medium and heavy load.
 
+## Logic (How the Program Works)
+
+```text
+csma_cd_protocols.py
+1. Setup: 8 stations, time in slots of 51.2 us, 1000 slots. A frame takes 2 slots; a collision is detected within 1 slot.
+2. Each slot, every station gets a new frame with a given probability (light 2%, medium 6%, heavy 12%). Backoff counters go down by 1.
+3. If the channel is busy, nobody starts. Otherwise, each station whose backoff is 0:
+   - 1-persistent: transmits at once;
+   - p-persistent: transmits with probability p, otherwise waits 1 slot.
+4. 0 stations -> idle slot. 1 station -> success: the channel is busy for 2 slots and the delay is recorded.
+5. 2 or more -> collision: detected in 1 slot and the jam signal is sent. For each collided frame:
+   collisions + 1; after 16 attempts the frame is dropped; otherwise Binary Exponential Backoff:
+   k = min(collisions, 10), wait a random 0 .. 2^k - 1 slots.
+6. Throughput = delivered x 2 / total slots. The table compares 1-persistent, p = 0.5 and p = 0.2 at the three loads.
+```
+
 ## How to Run
 No input is needed; the test data is built into each program.
 ```bash
